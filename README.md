@@ -1,55 +1,56 @@
 # tareas-uni-api
 
-Cloudflare Worker que sirve como API REST para la app [tareas-uni](https://github.com/ch-devx/tareas-uni). Se conecta a una base de datos Neon PostgreSQL y expone endpoints para gestionar tareas y materias.
+Cloudflare Worker that serves as a REST API for the [tareas-uni](https://github.com/ch-devx/tareas-uni) app. Connects to a Neon PostgreSQL database and exposes endpoints for managing tasks and subjects.
 
 **Worker URL:** https://uni-tasks-worker.tareas-uni.workers.dev
 
 ## Stack
 
 - Cloudflare Workers (JavaScript)
-- [@neondatabase/serverless](https://github.com/neondatabase/serverless) — driver de Neon para entornos edge
-- Neon PostgreSQL — base de datos
+- [@neondatabase/serverless](https://github.com/neondatabase/serverless) — Neon driver for edge environments
+- Neon PostgreSQL — database
 
 ## Endpoints
 
-### Materias
-| Método | Ruta | Descripción |
+### Subjects
+| Method | Route | Description |
 |--------|------|-------------|
-| GET | `/subjects` | Listar todas las materias |
-| POST | `/subjects` | Crear materia |
-| PUT | `/subjects/:id` | Editar materia |
-| DELETE | `/subjects/:id` | Eliminar materia |
+| GET | `/subjects` | List all subjects |
+| POST | `/subjects` | Create subject |
+| PUT | `/subjects/:id` | Edit subject |
+| DELETE | `/subjects/:id` | Delete subject |
 
-### Tareas
-| Método | Ruta | Descripción |
+### Tasks
+| Method | Route | Description |
 |--------|------|-------------|
-| GET | `/tasks` | Listar tareas pendientes (orden por deadline) |
-| GET | `/tasks/done` | Listar tareas completadas |
-| POST | `/tasks` | Crear tarea |
-| PUT | `/tasks/:id` | Editar tarea |
-| PATCH | `/tasks/:id/toggle` | Alternar estado pending/done |
-| DELETE | `/tasks/:id` | Eliminar tarea |
+| GET | `/tasks` | List pending tasks (sorted by deadline) |
+| GET | `/tasks/done` | List completed tasks |
+| POST | `/tasks` | Create task |
+| PUT | `/tasks/:id` | Edit task |
+| PATCH | `/tasks/:id/toggle` | Toggle pending/done status |
+| DELETE | `/tasks/:id` | Delete task |
 
-## Estructura
-
-```
+## Structure
 tareas-uni-api/
+
 ├── src/
-│   └── index.js       # Lógica completa del Worker
-├── wrangler.jsonc     # Configuración de Cloudflare
+
+│   └── index.js       # Full Worker logic
+
+├── wrangler.jsonc     # Cloudflare configuration
+
 └── package.json
-```
 
 ## Setup
 
-### 1. Requisitos
+### 1. Requirements
 
 - [Node.js](https://nodejs.org/) LTS
 - [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/): `npm install -g wrangler`
-- Cuenta en [Cloudflare](https://cloudflare.com)
-- Base de datos en [Neon](https://neon.tech)
+- Cloudflare account ([cloudflare.com](https://cloudflare.com))
+- Database on [Neon](https://neon.tech)
 
-### 2. Clonar e instalar dependencias
+### 2. Clone and install dependencies
 
 ```bash
 git clone https://github.com/ch-devx/tareas-uni-api.git
@@ -57,18 +58,18 @@ cd tareas-uni-api
 npm install
 ```
 
-### 3. Autenticarse en Cloudflare
+### 3. Authenticate with Cloudflare
 
 ```bash
 wrangler login
 ```
 
-### 4. Configurar el secret de la base de datos
+### 4. Set up the database secret
 
 ```bash
 wrangler secret put DATABASE_URL
-# Pegar el connection string de Neon cuando lo pida
-# Formato: postgresql://usuario:password@host/dbname?sslmode=require
+# Paste the Neon connection string when prompted
+# Format: postgresql://user:password@host/dbname?sslmode=require
 ```
 
 ### 5. Deploy
@@ -77,21 +78,18 @@ wrangler secret put DATABASE_URL
 npm run deploy
 ```
 
-## Desarrollo local
+## Local development
 
 ```bash
 npm run dev
 ```
 
-El Worker corre en `http://localhost:8787`. Para que funcione localmente necesitas un archivo `.dev.vars` en la raíz con:
+The Worker runs at `http://localhost:8787`. For it to work locally you need a `.dev.vars` file in the root with:
+DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
 
-```
-DATABASE_URL=postgresql://usuario:password@host/dbname?sslmode=require
-```
+## Database
 
-## Base de datos
-
-El schema está en Neon. Las tablas se crearon desde el proyecto Python original con SQLAlchemy. Si necesitas recrearlas:
+The schema lives in Neon. The tables were originally created from the Python project using SQLAlchemy. If you need to recreate them:
 
 ```sql
 CREATE TABLE subjects (
