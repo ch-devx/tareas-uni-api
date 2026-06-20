@@ -178,4 +178,18 @@ export default {
       return error("Internal server error", 500);
     }
   },
+  async scheduled(event, env, ctx) {
+    const sql = neon(env.DATABASE_URL);
+    try {
+      await sql`
+        UPDATE tasks t
+        SET deadline = CURRENT_DATE + (ds.offset_days || ' days')::INTERVAL
+        FROM demo_seed ds
+        WHERE t.id = ds.task_id
+      `;
+      console.log("Demo deadlines refreshed");
+    } catch (err) {
+      console.error("Failed to refresh demo deadlines", err);
+    }
+  },
 };
