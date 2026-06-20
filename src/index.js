@@ -39,7 +39,6 @@ export default {
     const sql = neon(env.DATABASE_URL);
     const url = new URL(request.url);
     const path = url.pathname;
-    const method = request.method;
 
     try {
       // ── Subjects ──────────────────────────────────────────
