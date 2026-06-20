@@ -21,9 +21,19 @@ function error(message, status = 400) {
 // ── Router ───────────────────────────────────────────────────
 export default {
   async fetch(request, env) {
-    // Handle CORS preflight
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: CORS });
+    }
+
+    const method = request.method;
+
+    // ── Demo read-only guard ────────────────────────────────
+    // Set DEMO_READONLY = "true" as a var in wrangler.jsonc to lock writes.
+    if (env.DEMO_READONLY === "true" && method !== "GET") {
+      return json(
+        { error: "This is a read-only demo. Write operations are disabled." },
+        403
+      );
     }
 
     const sql = neon(env.DATABASE_URL);
