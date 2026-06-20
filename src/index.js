@@ -55,11 +55,11 @@ export default {
       // POST /subjects
       if (path === "/subjects" && method === "POST") {
         const { name, color = "#6c757d" } = await request.json();
-        if (!name) return error("El nombre es requerido");
+        if (!name) return error("The name is required");
         const existing = await sql`
           SELECT id FROM subjects WHERE name = ${name}
         `;
-        if (existing.length > 0) return error("Ya existe una materia con ese nombre");
+        if (existing.length > 0) return error("A subject with that name already exists");
         const [row] = await sql`
           INSERT INTO subjects (name, color)
           VALUES (${name}, ${color})
@@ -77,7 +77,7 @@ export default {
           UPDATE subjects SET name = ${name}, color = ${color}
           WHERE id = ${id} RETURNING *
         `;
-        if (!row) return error("Materia no encontrada", 404);
+        if (!row) return error("Subject not found", 404);
         return json(row);
       }
 
@@ -85,7 +85,7 @@ export default {
       if (subjectMatch && method === "DELETE") {
         const id = parseInt(subjectMatch[1]);
         await sql`DELETE FROM subjects WHERE id = ${id}`;
-        return json({ message: "Materia eliminada" });
+        return json({ message: "Subject deleted" });
       }
 
       // ── Tasks ─────────────────────────────────────────────
@@ -121,8 +121,8 @@ export default {
       // POST /tasks
       if (path === "/tasks" && method === "POST") {
         const { title, description = null, subject_id = null, deadline, status = "pending" } = await request.json();
-        if (!title) return error("El título es requerido");
-        if (!deadline) return error("El deadline es requerido");
+        if (!title) return error("The title is required");
+        if (!deadline) return error("The deadline is required");
         const [row] = await sql`
           INSERT INTO tasks (title, description, subject_id, deadline, status)
           VALUES (${title}, ${description}, ${subject_id}, ${deadline}, ${status})
@@ -145,7 +145,7 @@ export default {
               status = ${status}
           WHERE id = ${id} RETURNING *
         `;
-        if (!row) return error("Tarea no encontrada", 404);
+        if (!row) return error("Task not found", 404);
         return json(row);
       }
 
@@ -154,7 +154,7 @@ export default {
       if (toggleMatch && method === "PATCH") {
         const id = parseInt(toggleMatch[1]);
         const [current] = await sql`SELECT status FROM tasks WHERE id = ${id}`;
-        if (!current) return error("Tarea no encontrada", 404);
+        if (!current) return error("Task not found", 404);
         const newStatus = current.status === "pending" ? "done" : "pending";
         const [row] = await sql`
           UPDATE tasks SET status = ${newStatus}
@@ -167,15 +167,15 @@ export default {
       if (taskMatch && method === "DELETE") {
         const id = parseInt(taskMatch[1]);
         await sql`DELETE FROM tasks WHERE id = ${id}`;
-        return json({ message: "Tarea eliminada" });
+        return json({ message: "Task deleted" });
       }
 
       // ── 404 ───────────────────────────────────────────────
-      return error("Ruta no encontrada", 404);
+      return error("Route not found", 404);
 
     } catch (err) {
       console.error(err);
-      return error("Error interno del servidor", 500);
+      return error("Internal server error", 500);
     }
   },
 };
