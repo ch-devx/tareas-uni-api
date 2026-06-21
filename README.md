@@ -1,8 +1,8 @@
-# tareas-uni-api
+# uni-task-tracker-api
 
-Cloudflare Worker that serves as a REST API for the [tareas-uni](https://github.com/ch-devx/tareas-uni) app. Connects to a Neon PostgreSQL database and exposes endpoints for managing tasks and subjects.
+Cloudflare Worker that serves as a REST API for the [uni-task-tracker](https://github.com/ch-devx/uni-task-tracker) app. Connects to a Neon PostgreSQL database and exposes endpoints for managing tasks and subjects.
 
-**Worker URL:** https://uni-tasks-worker.tareas-uni.workers.dev
+**Worker URL:** https://uni-tasks-worker.ch-devx.workers.dev
 
 ## Stack
 
@@ -31,7 +31,7 @@ Cloudflare Worker that serves as a REST API for the [tareas-uni](https://github.
 | DELETE | `/tasks/:id` | Delete task |
 
 ## Structure
-tareas-uni-api/
+uni-task-tracker-api/
 
 ├── src/
 
@@ -53,8 +53,8 @@ tareas-uni-api/
 ### 2. Clone and install dependencies
 
 ```bash
-git clone https://github.com/ch-devx/tareas-uni-api.git
-cd tareas-uni-api
+git clone https://github.com/ch-devx/uni-task-tracker-api.git
+cd uni-task-tracker-api
 npm install
 ```
 
