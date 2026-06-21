@@ -1,5 +1,5 @@
 {
-  "name": "uni-tasks-tracker-api",
+  "name": "uni-tasks-worker",
   "version": "0.0.0",
   "private": true,
   "scripts": {
