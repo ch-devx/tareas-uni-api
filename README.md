@@ -124,6 +124,9 @@ npm run dev
 
 # 5. Deploy
 npm run deploy
+
+# 6. Run tests
+npm test
 ```
 
 For local development, create a `.dev.vars` file in the project root (gitignored):
