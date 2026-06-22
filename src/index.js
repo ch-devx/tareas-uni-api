@@ -4,7 +4,7 @@ import { neon } from "@neondatabase/serverless";
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
 function json(data, status = 200) {
@@ -18,6 +18,25 @@ function error(message, status = 400) {
   return json({ error: message }, status);
 }
 
+// ── Auth ─────────────────────────────────────────────────────
+// Constant-time string comparison to avoid timing attacks on the token check.
+function timingSafeEqual(a, b) {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
+}
+
+function isAuthorized(request, env) {
+  if (!env.API_TOKEN) return false; // fail closed if the secret isn't configured
+  const header = request.headers.get("Authorization") || "";
+  const [scheme, token] = header.split(" ");
+  if (scheme !== "Bearer" || !token) return false;
+  return timingSafeEqual(token, env.API_TOKEN);
+}
+
 // ── Router ───────────────────────────────────────────────────
 export default {
   async fetch(request, env) {
@@ -26,14 +45,24 @@ export default {
     }
 
     const method = request.method;
+    const isWrite = method !== "GET";
 
     // ── Demo read-only guard ────────────────────────────────
     // Set DEMO_READONLY = "true" as a var in wrangler.jsonc to lock writes.
-    if (env.DEMO_READONLY === "true" && method !== "GET") {
+    if (env.DEMO_READONLY === "true" && isWrite) {
       return json(
         { error: "This is a read-only demo. Write operations are disabled." },
         403
       );
+    }
+
+    // ── Token guard ──────────────────────────────────────────
+    // Every write operation (POST/PUT/PATCH/DELETE) requires a valid
+    // Authorization: Bearer <API_TOKEN> header. This is independent of
+    // DEMO_READONLY: even if the demo flag is ever turned off, writes
+    // still require the secret token. GET requests are never gated here.
+    if (isWrite && !isAuthorized(request, env)) {
+      return json({ error: "Unauthorized" }, 401);
     }
 
     const sql = neon(env.DATABASE_URL);
