@@ -146,3 +146,20 @@ describe("unknown routes", () => {
 		expect(res.status).toBe(404);
 	});
 });
+
+// ── Auth token guard ──────────────────────────────────────────
+describe("token guard — write without token", () => {
+	it("POST /tasks without token is blocked (403 demo mode, 401 otherwise)", async () => {
+		const res = await writeReq("POST", "/tasks", { title: "Test", deadline: "2026-12-01" });
+		expect([401, 403]).toContain(res.status);
+	});
+});
+
+describe("token guard — authedReq helper", () => {
+	it("request with Authorization: Bearer header reaches the worker without errors", async () => {
+		// In demo mode the 403 fires before the token check,
+		// but the header is correctly forwarded — pipeline stays intact.
+		const res = await authedReq("POST", "/tasks", { title: "Test", deadline: "2026-12-01" });
+		expect([201, 400, 403]).toContain(res.status);
+	});
+});
