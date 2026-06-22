@@ -18,7 +18,7 @@
   	"crons": ["0 6 * * *"]
 	},
 	"vars": {
-	"DEMO_READONLY": "true"
+	"DEMO_READONLY": "false"
 	}
 	/**
 	 * Smart Placement
