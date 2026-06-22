@@ -1,0 +1,10 @@
+{
+  "name": "uni-tasks-worker",
+  "main": "src/index.js",
+  "compatibility_date": "2026-04-12",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "DEMO_READONLY": "true",
+    "API_TOKEN": "test-token"
+  }
+}
