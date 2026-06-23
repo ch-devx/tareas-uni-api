@@ -155,11 +155,9 @@ describe("token guard — write without token", () => {
 	});
 });
 
-describe("token guard — authedReq helper", () => {
-	it("request with Authorization: Bearer header reaches the worker without errors", async () => {
-		// In demo mode the 403 fires before the token check,
-		// but the header is correctly forwarded — pipeline stays intact.
+describe("Authorization header — forwarded correctly", () => {
+	it("request with Bearer token still returns 403 in demo mode (DEMO_READONLY=true)", async () => {
 		const res = await authedReq("POST", "/tasks", { title: "Test", deadline: "2026-12-01" });
-		expect([201, 400, 403]).toContain(res.status);
+		expect(res.status).toBe(403); // demo mode fires before token check
 	});
 });
